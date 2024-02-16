@@ -6,27 +6,43 @@
 import pandas as pd
 from tabulate import tabulate,tabulate_formats
 
-# Press the green button in the gutter to run the script.
 import vixy
-# import yfin
+import yfin
 # import berg
 
 if __name__ == '__main__':
 
     # pulling data
-    vix = vixy.vix()
-    vix.index = pd.to_datetime(vix.index).date
-    #
-    # stonk = yfin.yonks()
-    # stonk.index = pd.to_datetime(stonk.index).date
-    #
-    # print(tabulate(vix.tail(5),headers='keys',tablefmt=tabulate_formats[1]))
-    # print(tabulate(stonk.tail(5),headers='keys',tablefmt=tabulate_formats[1]))
-    #
-    # vix.sort_index(), stonk.sort_index()
-    # df = pd.merge(vix, stonk, left_index=True, right_index=True)
-    # print(tabulate(df.tail(5),headers='keys',tablefmt=tabulate_formats[1]))
-    #
+    # vix = vixy.vix()
+    vix = pd.read_parquet('data/tester.parquet')
+    # print(tabulate(vix.head(50),headers='keys'))
+    # vix.to_parquet('data/tester.parquet')
+
+    df = vix[['Trade_Date','Expiry_Date','Close','DTM','Calendar_Num']]
+
+    pivot_df = df.pivot_table(index='Trade_Date', columns='Calendar_Num', values='Close', aggfunc='first')
+    pivot_df.columns = [f"{col}_Close" for col in pivot_df.columns]
+
+    pivot_df_ = df.pivot_table(index='Trade_Date', columns='Calendar_Num', values='DTM', aggfunc='first')
+    pivot_df_.columns = [f"{col}_DTM" for col in pivot_df_.columns]
+
+    pivot_df = pd.merge(pivot_df, pivot_df_, how='left', on='Trade_Date')
+
+    pivot_df.reset_index(inplace=True)
+    pivot_df = pivot_df[[
+        'Trade_Date', '1.0_DTM', '1.0_Close', '2.0_Close', '3.0_Close',
+        '4.0_Close', '5.0_Close', '6.0_Close', '7.0_Close', '8.0_Close'
+    ]].set_index('Trade_Date')
+
+    stonk = yfin.yonks()
+
+    pivot_df.index = pd.to_datetime(pivot_df.index).date
+    stonk.index = pd.to_datetime(stonk.index).date
+    df = pd.merge(stonk[['^VIX_px']], pivot_df, how='right', left_index=True, right_index=True)
+
+    print(tabulate(df.tail(30),headers='keys',tablefmt=tabulate_formats[1]))
+
+
     # bberg = berg.bberg_hist(min(df.index))
     # bberg.index = pd.to_datetime(bberg.index).date
     # df = pd.merge(df, bberg, left_index=True, right_index=True)
@@ -37,6 +53,4 @@ if __name__ == '__main__':
     #
     # print(tabulate(df.tail(9),headers='keys',tablefmt=tabulate_formats[1]))
 
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
 # 20 day avg volumes

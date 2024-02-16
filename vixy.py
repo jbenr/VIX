@@ -46,13 +46,14 @@ def vix():
     df = df.replace({'Futures':d})
     df['VIX DTM'] = (pd.to_datetime(df['Futures']) - pd.to_datetime(df['Trade Date'])).dt.days
 
-    df.rename(columns={'Futures':'Expiry_Date', 'VIX':'Close_Px', 'VIX DTM':'DTM'}, inplace=True)
-    df = df.set_index('Trade Date')
-    df = df.sort_values(by=['Trade Date', 'DTM'])
+    df.rename(columns={'Trade Date':'Trade_Date','Futures':'Expiry_Date', 'VIX':'Close_Px', 'VIX DTM':'DTM'}, inplace=True)
+    # df = df.set_index('Trade_Date')
+    df = df.sort_values(by=['Trade_Date', 'DTM'])
+    df['Calendar_Num'] = df.groupby('Trade_Date')['DTM'].rank(ascending=True)
 
     # df = df.rename(columns={'Close':'VIX'})
     # df = df[['Trade Date', 'VIX', 'VIX DTM']]
 
     return df
 
-print(tabulate(vix().tail(15),headers='keys',tablefmt=tabulate_formats[0]))
+# print(tabulate(vix().tail(15),headers='keys',tablefmt=tabulate_formats[0]))

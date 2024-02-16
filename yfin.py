@@ -22,12 +22,12 @@ def yonks():
 
     # df_vol_20d = pd.rolling_mean(df_vol, window=5)
 
-    # print(tabulate(df_px.tail(10),headers='keys'))
-
     df = pd.merge(df_px,df_chg,how='left',left_index=True,right_index=True)
     df = pd.merge(df,df_vol,how='left',left_index=True,right_index=True)
 
     df = df.reindex(sorted(df.columns), axis=1)
+    df = df.rename_axis('Trade_Date')
+
     return df
 
 # print(tabulate(yonks().tail(10),headers='keys'))
