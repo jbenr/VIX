@@ -15,7 +15,7 @@ NUM_ROWS = 28
 NUM_COLS = 28
 NUM_CLASSES = 10
 BATCH_SIZE = 128
-EPOCHS = 10
+EPOCHS = 20
 
 def data_summary(X_train, y_train, X_test, y_test):
     """Summarize current state of dataset"""
