@@ -31,7 +31,7 @@ def is_business_day(input_date_str, input_date):
     except:
         None
 
-def run_over_time_frame():
+def run_over_time_frame(start_yr):
     #Goes through the years
 
     futures_exp_dates = []
@@ -39,10 +39,7 @@ def run_over_time_frame():
     thirty_days = datetime.timedelta(days=30)
     one_day = datetime.timedelta(days=1)
 
-
-    # TODO: FIX YEAR RANGE
-    for year in range(2013, today.year+2):
-
+    for year in range(start_yr, today.year+2):
         #Goes through the months
         for month in range(1,13):
             month = "%02d" % month

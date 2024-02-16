@@ -7,15 +7,15 @@ import pandas as pd
 from tabulate import tabulate,tabulate_formats
 
 # Press the green button in the gutter to run the script.
-# import vixy
+import vixy
 # import yfin
 # import berg
 
 if __name__ == '__main__':
 
     # pulling data
-    # vix = vixy.vix()
-    # vix.index = pd.to_datetime(vix.index).date
+    vix = vixy.vix()
+    vix.index = pd.to_datetime(vix.index).date
     #
     # stonk = yfin.yonks()
     # stonk.index = pd.to_datetime(stonk.index).date
@@ -32,10 +32,10 @@ if __name__ == '__main__':
     # df = pd.merge(df, bberg, left_index=True, right_index=True)
 
     # df.to_pickle('data/tester.pickle')
-    df = pd.read_pickle('data/tester.pickle')
-    df = df.drop_duplicates(subset='BTC-USD_chg', keep='first')
-
-    print(tabulate(df.tail(9),headers='keys',tablefmt=tabulate_formats[1]))
+    # df = pd.read_pickle('data/tester.pickle')
+    # df = df.drop_duplicates(subset='BTC-USD_chg', keep='first')
+    #
+    # print(tabulate(df.tail(9),headers='keys',tablefmt=tabulate_formats[1]))
 
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
