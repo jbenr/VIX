@@ -34,13 +34,24 @@ if __name__ == '__main__':
         '4.0_Close', '5.0_Close', '6.0_Close', '7.0_Close', '8.0_Close'
     ]].set_index('Trade_Date')
 
-    stonk = yfin.yonks()
+    # Iterate over each column
+    for i in range(1, len([i for i in pivot_df.columns if 'Close' in i])):
+        # Iterate over subsequent columns
+        for j in range(i + 1, len([i for i in pivot_df.columns if 'Close' in i])):
+            # Create a new column for the spread between ith column and the jth column
+            pivot_df[f'{i}-{j}'] = pivot_df[pivot_df.columns[i]] - pivot_df[pivot_df.columns[j]]
 
-    pivot_df.index = pd.to_datetime(pivot_df.index).date
-    stonk.index = pd.to_datetime(stonk.index).date
-    df = pd.merge(stonk[['^VIX_px']], pivot_df, how='right', left_index=True, right_index=True)
+    # print(pivot_df.head(3))
+    print(tabulate(pivot_df.tail(3),headers='keys',tablefmt=tabulate_formats[1]))
 
-    print(tabulate(df.tail(30),headers='keys',tablefmt=tabulate_formats[1]))
+
+    # stonk = yfin.yonks()
+    #
+    # pivot_df.index = pd.to_datetime(pivot_df.index).date
+    # stonk.index = pd.to_datetime(stonk.index).date
+    # df = pd.merge(stonk[['^VIX_px']], pivot_df, how='right', left_index=True, right_index=True)
+    #
+    # print(tabulate(df.tail(30),headers='keys',tablefmt=tabulate_formats[1]))
 
 
     # bberg = berg.bberg_hist(min(df.index))
