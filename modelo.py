@@ -6,7 +6,7 @@ from keras.utils.vis_utils import model_to_dot
 from IPython.display import SVG
 
 # PyTorch this jawn
-# import torch
+import torch
 
 import livelossplot
 plot_losses = livelossplot.PlotLossesKeras()
