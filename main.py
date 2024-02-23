@@ -6,6 +6,7 @@
 import pandas as pd
 from tabulate import tabulate,tabulate_formats
 
+import modelo
 import vixy
 import yfin
 # import berg
@@ -16,7 +17,7 @@ if __name__ == '__main__':
     # vix = vixy.vix()
     vix = pd.read_parquet('data/tester.parquet')
     # print(tabulate(vix.head(50),headers='keys'))
-    # vix.to_parquet('data/tester.parquet')
+    # vix.to_parquet('data/tester_vix.parquet')
 
     df = vix[['Trade_Date','Expiry_Date','Close','DTM','Calendar_Num']]
 
@@ -34,25 +35,43 @@ if __name__ == '__main__':
         '4.0_Close', '5.0_Close', '6.0_Close', '7.0_Close', '8.0_Close'
     ]].set_index('Trade_Date')
 
-    # Iterate over each column
+    target = []
     for i in range(1, len([i for i in pivot_df.columns if 'Close' in i])):
-        # Iterate over subsequent columns
         for j in range(i + 1, len([i for i in pivot_df.columns if 'Close' in i])):
             # Create a new column for the spread between ith column and the jth column
+            target.append(f'{i}-{j}')
             pivot_df[f'{i}-{j}'] = pivot_df[pivot_df.columns[i]] - pivot_df[pivot_df.columns[j]]
 
-    # print(pivot_df.head(3))
-    print(tabulate(pivot_df.tail(3),headers='keys',tablefmt=tabulate_formats[1]))
-
+    # print(tabulate(pivot_df.tail(5),headers='keys',tablefmt=tabulate_formats[1]))
 
     # stonk = yfin.yonks()
-    #
-    # pivot_df.index = pd.to_datetime(pivot_df.index).date
-    # stonk.index = pd.to_datetime(stonk.index).date
-    # df = pd.merge(stonk[['^VIX_px']], pivot_df, how='right', left_index=True, right_index=True)
-    #
-    # print(tabulate(df.tail(30),headers='keys',tablefmt=tabulate_formats[1]))
+    # stonk.to_parquet('data/tester_stonk.parquet')
+    stonk = pd.read_parquet('data/tester_stonk.parquet')
 
+    # print(tabulate(stonk.tail(5),headers='keys',tablefmt=tabulate_formats[1]))
+
+    pivot_df.index = pd.to_datetime(pivot_df.index).date
+    stonk.index = pd.to_datetime(stonk.index).date
+    stonk = stonk.pct_change()
+
+    df = pd.merge(pivot_df[['1.0_DTM']], stonk, how='left', left_index=True, right_index=True)
+    df = pd.merge(df, pivot_df[target], how='left', left_index=True, right_index=True)
+    # print(df.shape)
+    df = df.dropna().dropna(axis=1)
+    # print(df.shape)
+
+    X = df[[col for col in df.columns if col not in target]]
+    y = df[target]
+
+    # print(tabulate(X.tail(10),headers='keys',tablefmt=tabulate_formats[1]))
+    # print(tabulate(y.tail(10),headers='keys',tablefmt=tabulate_formats[1]))
+
+    X_na = X[X.isna().any(axis=1)]
+    y_na = y[y.isna().any(axis=1)]
+    # print(tabulate(X_na.tail(5),headers='keys',tablefmt=tabulate_formats[1]))
+    # print(tabulate(y_na.tail(5),headers='keys',tablefmt=tabulate_formats[1]))
+
+    modelo.do_the_thing(X, y)
 
     # bberg = berg.bberg_hist(min(df.index))
     # bberg.index = pd.to_datetime(bberg.index).date

@@ -5,7 +5,8 @@ from functools import reduce
 import pandas as pd
 
 def yonks():
-    df = yf.download(['^GSPC', '^IXIC', '^DJI', '^IRX', '^FVX', '^TNX', '^TYX', 'BTC-USD', '^VIX', 'ZN=F','ZB=F','ZF=F','ZT=F','ES=F','YM=F','NQ=F','RTY=F'], start = datetime(2013,1,1))
+    df = yf.download(['^GSPC', '^IXIC', '^DJI', 'IWM', '^FVX', '^TNX', '^TYX', 'BTC-USD', '^VIX',
+                      "IYC", "IYK", "IYE", "IYF", "IYH", "IYJ", "IYM", "IYW", "IYZ", "IDU"], start = datetime(2013,1,1))
 
     df_px = df['Adj Close']
     df_vol = df['Volume']
@@ -22,10 +23,10 @@ def yonks():
 
     # df_vol_20d = pd.rolling_mean(df_vol, window=5)
 
-    df = pd.merge(df_px,df_chg,how='left',left_index=True,right_index=True)
-    df = pd.merge(df,df_vol,how='left',left_index=True,right_index=True)
+    # df = pd.merge(df_px,df_chg,how='left',left_index=True,right_index=True)
+    # df = pd.merge(df,df_vol,how='left',left_index=True,right_index=True)
 
-    df = df.reindex(sorted(df.columns), axis=1)
+    df = df_px.reindex(sorted(df_px.columns), axis=1)
     df = df.rename_axis('Trade_Date')
 
     return df
