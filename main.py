@@ -14,10 +14,10 @@ import yfin
 if __name__ == '__main__':
 
     # pulling data
-    # vix = vixy.vix()
-    vix = pd.read_parquet('data/tester.parquet')
+    vix = vixy.vix()
+    # vix = pd.read_parquet('data/tester.parquet')
     # print(tabulate(vix.head(50),headers='keys'))
-    # vix.to_parquet('data/tester_vix.parquet')
+    vix.to_parquet('data/tester_vix.parquet')
 
     df = vix[['Trade_Date','Expiry_Date','Close','DTM','Calendar_Num']]
 
@@ -40,13 +40,13 @@ if __name__ == '__main__':
         for j in range(i + 1, len([i for i in pivot_df.columns if 'Close' in i])):
             # Create a new column for the spread between ith column and the jth column
             target.append(f'{i}-{j}')
-            pivot_df[f'{i}-{j}'] = pivot_df[pivot_df.columns[i]] - pivot_df[pivot_df.columns[j]]
+            pivot_df[f'{i}-{j}'] =  pivot_df[pivot_df.columns[j]] - pivot_df[pivot_df.columns[i]]
 
     # print(tabulate(pivot_df.tail(5),headers='keys',tablefmt=tabulate_formats[1]))
 
-    # stonk = yfin.yonks()
-    # stonk.to_parquet('data/tester_stonk.parquet')
-    stonk = pd.read_parquet('data/tester_stonk.parquet')
+    stonk = yfin.yonks()
+    stonk.to_parquet('data/tester_stonk.parquet')
+    # stonk = pd.read_parquet('data/tester_stonk.parquet')
 
     # print(tabulate(stonk.tail(5),headers='keys',tablefmt=tabulate_formats[1]))
 
